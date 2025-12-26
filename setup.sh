@@ -33,7 +33,7 @@ pip install --upgrade pip
 if [ -f requirements.txt ]; then
     pip install -r requirements.txt
 else
-    pip install install pyspark==4.1.* plotly==6.5.* pandas==2.3.* requests
+    pip install pyspark==4.1.* plotly==6.5.* pandas==2.3.* requests
     pip freeze > requirements.txt
 fi
 
@@ -48,8 +48,10 @@ echo "This directory holds raw source data" > a_in/PURPOSE
 echo "This directory holds refined data" > a_io/PURPOSE
 echo "This directory holds consumption ready data products" > a_out/PURPOSE
 
-git add .gitignore README LICENSE
+git add -f .gitignore
+git add -A
 git commit -m "Set up project repository"
+git push origin main
 
 # Confirm installations
 unset INSTALL_STATUS
