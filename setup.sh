@@ -40,15 +40,15 @@ fi
 # Setup project (password may be needed to use ssh keys)
 git clone git@github.com:sjoshuam/reg_analysis.git
 
-mkdir a_in a_io a_out
+mkdir a_in b_io c_out
 echo "#Project: reg_analysis" > README
-echo ".*" > .gitignore
+echo -e ".*\na_in/\n__pycache__/" > .gitignore
 echo "All rights reserved.  Software is provided for viewing purposes only, without warrenty of any kind." > LICENSE
 echo "This directory holds raw source data" > a_in/PURPOSE
-echo "This directory holds refined data" > a_io/PURPOSE
-echo "This directory holds consumption ready data products" > a_out/PURPOSE
+echo "This directory holds refined data" > b_io/PURPOSE
+echo "This directory holds consumption ready data products" > c_out/PURPOSE
 
-git add -f .gitignore
+git add -f .gitignore a_in/PURPOSE
 git add -A
 git commit -m "Set up project repository"
 git push origin main
