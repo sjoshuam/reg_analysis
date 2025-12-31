@@ -10,19 +10,18 @@ import pyspark.sql.functions as psf
 spark = pyspark.sql.SparkSession.builder.appName('ExtractData').config('spark.executor.memory', '8g') \
     .config('spark.driver.memory', '8g').getOrCreate()
 
-from m1_import_data import ImportData
-
 ## DEFINE CLASS
 
 class ExtractData:
     '''Parse downloaded xml files'''
 
-    def __init__(self, input_dir:str='a_in/cfr_raw', output_dir:str='a_in/cfr_parsed') -> None:
+    def __init__(self, input_dir:str='a_in/cfr_raw', output_dir:str='a_in/cfr_parsed', test_mode=False) -> None:
         '''Initialize the ExtractData class'''
 
         # Save parameters
         self.input_dir = input_dir
         self.output_dir = output_dir
+        self.test_mode = test_mode
 
         # create slot of roster of output files
         self.roster = []
@@ -36,7 +35,7 @@ class ExtractData:
 
         # Display execution status
         status = [f'{i}: {self.checklist[i]}' for i in self.checklist.keys()]
-        status = ['\n==== ImportData ================', '--Status--------'] + status
+        status = ['\n==== ExtractData ================', '--Status--------'] + status
         status = "\n".join(status)
 
         return status
@@ -216,6 +215,11 @@ class ExtractData:
         parsed_files = inventory_directory(dir=self.output_dir, ext='-Section.parquet', label='parsed')
         files = files.join(parsed_files, on='title_id', how='left').sort('title_id').na.fill(False, subset=['parsed'])
 
+        # for test mode, limit to first 5 titles
+        if self.test_mode:
+            print(('!'*8) + ' WARNING: RUNNING IN TEST MODE' + ('!'*8))
+            files = files.limit(int(2**6))
+
         # update checklist and output
         self.checklist['make_roster'] = True
         self.roster = files
@@ -260,11 +264,14 @@ class ExtractData:
         for i in ['Section', 'Part']:
             pattern = self.output_dir + f'/Title*-{i}/*.parquet'
             df = spark.read.parquet(pattern)
-            df = df.repartition(df.count()//100)
+            df = df.repartition(max(df.count()//500, 2))
+            df = df.withColumn('part_id', psf.regexp_replace('part_id', 'PART-', 'Part-')) # patch an irregularity
+            if self.test_mode:
+                print('Dataframe: ', i)
+                df.show(5, truncate=16)
             print(i, ' count= ', df.count(), ' partitions= ', df.rdd.getNumPartitions())
             df.write.mode('overwrite').parquet(os.path.join(self.output_dir+f'_{i.lower()}'))
         self.checklist['compile_dataset'] = True
-        os.system(f'rm -rf {self.output_dir}/*')
         return None
 
     def extract_data(self) ->  None:
@@ -277,14 +284,12 @@ class ExtractData:
 ## TEST EXECUTE CODE
 if __name__ == '__main__':
 
-    # Import data (m1_import_data.py)
-    imported_data = ImportData()
-    imported_data.import_data(query_server=False)
-    print(imported_data)
-
     # Extract data (m2_extract_data.py)
-    extracted_data = ExtractData()
+    extracted_data = ExtractData(test_mode=False)
     extracted_data.extract_data()
+    print(extracted_data)
+
+    #
     
 
     ##########==========##########==========##########==========##########==========##########==========##########==========

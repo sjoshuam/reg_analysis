@@ -8,8 +8,20 @@ apt-get -yqq update
 apt-get full-upgrade -yqq
 apt-get autoremove -yqq
 
-# JAVA Setup Java 21
-sudo apt-get install -y openjdk-21-jdk
+# JAVA/C: OS-Level infrastructure
+apt-get install build-essential -yqq
+apt-get install -y openjdk-21-jdk
+
+# CUDA:  GPU processing infrastructure
+apt-get purge 'nvidia-*'
+apt-get autoremove
+apt-get autoclean
+
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+dpkg -i cuda-keyring_1.1-1_all.deb
+apt-get update
+apt-get install cuda-toolkit-13-1 -yqq
+apt-get install nvidia-open -yqq # should be 590
 
 # SSH Keys: Generate SSH keys for GitHub access
 if [ ! -d ~/.ssh ]; then
@@ -33,7 +45,9 @@ pip install --upgrade pip
 if [ -f requirements.txt ]; then
     pip install -r requirements.txt
 else
-    pip install pyspark==4.1.* plotly==6.5.* pandas==2.3.* requests
+    # pip freeze | xargs pip uninstall -y. # Uncomment to clear existing packages
+    pip install pyspark==4.1.* plotly==6.5.* torch==2.9.* sentence-transformers==5.2.*\
+        requests scikit-learn
     pip freeze > requirements.txt
 fi
 
@@ -57,11 +71,13 @@ git push origin main
 unset INSTALL_STATUS
 INSTALL_STATUS="==== Versions ================\n"
 INSTALL_STATUS+=("[UBUNTU] $(lsb_release -r)\n")
+INSTALL_STATUS+=("[CUDA] $(nvidia-smi | grep "CUDA Version")\n")
 INSTALL_STATUS+=("[JAVA] $(java --version | grep openjdk)\n")
 INSTALL_STATUS+=("[PYTHON] $(python3 --version)\n")
 INSTALL_STATUS+=("[VENV] $(basename "$VIRTUAL_ENV")\n")
 INSTALL_STATUS+=("[PANDAS] $(pip show pandas | grep Version | head -n 1)\n")
 INSTALL_STATUS+=("[PYSPARK] $(pip show pyspark | grep Version | head -n 1)\n")
 INSTALL_STATUS+=("[PLOTLY] $(pip show plotly | grep Version | head -n 1)\n")
+INSTALL_STATUS+=("[TORCH->GPU] $(python3 -c 'import torch; print(torch.cuda.is_available())')")
 echo -e ${INSTALL_STATUS[@]}
 unset INSTALL_STATUS
