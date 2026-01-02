@@ -62,7 +62,7 @@ class EmbedData:
         # Read in data
         self.part_data = spark.read.parquet('a_in/cfr_parsed_part')
         self.section_data = spark.read.parquet('a_in/cfr_parsed_section')
-        self.section_data = self.section_data.repartition(self.section_data.count()//1000)
+        self.section_data = self.section_data.repartition('title_id')
 
         # for test mode, filter to a subset of the dataset (300,000 sections -- about 20% of the total)
         if self.test_mode:
@@ -115,31 +115,30 @@ class EmbedData:
         schema = pst.StructType([
             pst.StructField('title_id', pst.StringType(), False),
             pst.StructField('part_id', pst.StringType(), False),
-            #pst.StructField('part_embedding', pst.ArrayType(pst.FloatType()), False),
             pst.StructField('part_embedding', VectorUDT(), False),
         ])
-        part_vectors = [(i[0], i[1], part_vectors[i]) for i in part_vectors.keys()]
+        part_vectors = [(i[0], i[1], Vectors.dense(part_vectors[i])) for i in part_vectors.keys()]
         part_vectors = spark.createDataFrame(part_vectors, schema=schema)
+        part_vectors = part_vectors.repartition('title_id')
         self.part_data = self.part_data.join(part_vectors, on=['title_id', 'part_id'], how='left')
+
         del part_vectors
 
         # section - reshape embeddings to a join-ready state
         schema = pst.StructType([
             pst.StructField('section_hash', pst.StringType(), False),
             pst.StructField('section_embedding', VectorUDT(), False),
-            #pst.StructField('section_embedding', pst.ArrayType(pst.FloatType()), False),
         ])
         embedded_text = [Vectors.dense(i) for i in embedded_text]
         #embedded_text = [i.tolist() for i in embedded_text]
         embedded_text = spark.createDataFrame(list(zip(section_hash, embedded_text)), schema=schema)\
-            .repartition(self.section_data.count() // 1000)
+            .repartition(self.section_data.count() // 1000) # repartition change
         del section_hash
 
         # section - join embeddings back to section data
-        embedded_text = embedded_text.repartition('section_hash')
-        self.section_data = self.section_data.repartition('section_hash')
         embedded_text = self.section_data.drop('section_text')\
             .join(psf.broadcast(embedded_text), on=['section_hash'], how='left') # prevents oversized task
+        embedded_text = embedded_text.repartition('title_id') # repartition change
 
         # write files to disk
         self.part_data.write.mode('overwrite').parquet('a_in/cfr_embedded_part')
