@@ -46,8 +46,8 @@ if [ -f requirements.txt ]; then
     pip install -r requirements.txt
 else
     # pip freeze | xargs pip uninstall -y. # Uncomment to clear existing packages
-    pip install pyspark==4.1.* plotly==6.5.* torch==2.9.* sentence-transformers==5.2.*\
-        requests scikit-learn pandas openpyxl
+    pip install pyspark==4.1.* plotly==6.5.* torch==2.9.* sentence-transformers==5.2.* dash[cloud]==3.3.*\
+        requests scikit-learn pandas==2.3.* openpyxl 
     pip freeze > requirements.txt
 fi
 
