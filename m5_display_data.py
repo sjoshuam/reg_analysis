@@ -739,7 +739,7 @@ class DisplayData:
                 html.H1('Chapter III: Methodology', style=self.css['Chp-H1']),
                 html.P([
                     self.text['Chapter-Methodology'],
-                    html.A(href='https://sjoshua.github.io/gallery.html', children='sjoshua.github.io', style=page_css['A']),
+                    html.A(href='https://sjoshuam.github.io/portfolio/', children='sjoshuam.github.io', style=page_css['A']|{"color": page_colors['bg']}),
                     ], style=self.css['Chp-P']),
             ], style=self.css['chp-flex']),
         ], style=self.css['chapter'])

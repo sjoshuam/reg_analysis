@@ -1,4 +1,4 @@
-#Project: Code of Federal Regulations (CFR) Analysis
+# Project: Code of Federal Regulations (CFR) Analysis
 
 Only Congress can pass laws, but Congress typically delegates rule-making authority to federal agencies, which have the expertise to implement and enforce those laws.
 The United States Code of Federal Regulations (CFR) is the official legal compilation for the rules federal agencies issue.
