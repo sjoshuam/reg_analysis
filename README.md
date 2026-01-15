@@ -36,6 +36,8 @@ setup.sh may help you in recreating this environment, but you should treat it as
 **M0: Executing the Pipeline of Pipelines**
 + Make "pipeline of pipelines" for single-command execution
 + Centralized focal year wiring
++ Finish string methods and component-method checklists
++ Create a "test mode" that executes in near real time
 
 **M1: Downloadings xml source files**
 + Download 2025

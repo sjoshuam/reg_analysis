@@ -150,8 +150,10 @@ class EmbedData:
   
     def embed_data(self) -> None:
         '''Pipeline Executor - Calculate embeddings for regulation text'''
-        if not self.checklist['read_data']: self.read_data()
-        if not self.checklist['make_embeddings']: self.make_embeddings()
+        if not self.checklist['read_data']:
+            self.read_data()
+        if not self.checklist['make_embeddings']:
+            self.make_embeddings()
         return None
 
 ## TEST EXECUTE CLASS "RUN ALL" METHOD
