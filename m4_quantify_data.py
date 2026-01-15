@@ -1,4 +1,4 @@
-'''Calculate useful statistics for regulation text and embeddings'''
+'''Calculate useful statistics for regulation text and embeddings; save boiled down data to b_io as excel files'''
 
 ## IMPORTS AND SETTINGS
 import datetime, numpy as np, pandas as pd
@@ -214,24 +214,21 @@ class QuantifyData:
     # -- EXECUTE ALL FUNCTIONS --------
     def quantify_data(self) -> None:
         '''Calculate useful statistics for regulation text and embeddings'''
-        quantify_data.read_data()
-        quantify_data.make_section_statistics()
-        quantify_data.note_deviant_extremes()
-        quantify_data.make_part_statistics()
-        quantify_data.export_section_data()
-        quantify_data.export_part_data()
+        self.read_data()
+        self.make_section_statistics()
+        self.note_deviant_extremes()
+        self.make_part_statistics()
+        self.export_section_data()
+        self.export_part_data()
 
     pass
 
-## TEST EXECUTION
+## TEST EXECUTE CLASS "RUN ALL" METHOD
 
 if __name__ == '__main__':
 
-    # Quantify data 
-    start_time = datetime.datetime.now()
     quantify_data = QuantifyData()
     quantify_data.quantify_data()
-    print('Elapsed time:', datetime.datetime.now() - start_time)
 
 
 ##########==========##########==========##########==========##########==========##########==========##########==========

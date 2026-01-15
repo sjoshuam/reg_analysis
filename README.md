@@ -29,3 +29,29 @@ I developed this code in a environment with the specifications below and have no
 + The packages specified in the requirements.txt file.
 
 setup.sh may help you in recreating this environment, but you should treat it as a recommendation only.  It has not been tested enough to be trusted for end-to-end execution.  Future development (medium priority) will configure a proper docker file for this project.
+
+
+## TODO: 
+
+**M0: Executing the Pipeline of Pipelines**
++ Make "pipeline of pipelines" for single-command execution
++ Centralized focal year wiring
+
+**M1: Downloadings xml source files**
++ Download 2025
++ Wire in back-up download url if practical for large slow-load files
+
+**M2: Extracting content from xml files to parquet dataset**
++ Centralize partition management
+
+**M3: Generate sentence embeddings**
++ Make PySpark / Embeddings execution more cleanly separated
++ Generate embeddings for all years
+
+**M4: Quantifying the data**
++ Generate UMAP coordinates from embeddings
++ Experiment with an embedding "drift" measurement
+
+**M5: Display the data**
++ Add plot-based analysis for factors contributing to regulatory bulk (esp. dissimilarty scores.)
++ Rehost on AWS. Elastic Beanstock? (Refactor m5 for full class encapsulation)

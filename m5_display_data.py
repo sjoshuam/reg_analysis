@@ -111,7 +111,7 @@ page_text = {
         "It builds a mildly interactive data dashboard using Plotly's Dash framework.",
         "The core interactive functionality is two dropdown menus, which enable users to select a CFR part for examination.",
         "However, all plots also provide additional information if the user hovers over plot elements.",
-        "Future development (high priority) will add more plot-based analysis of the factors contributing to regulatory bulk, especially those relating to dissimilarity scores",
+        "Future development (high priority) will add more plot-based analysis of the factors contributing to regulatory bulk, especially those relating to dissimilarity scores.",
         "Future development (low priority) may also rehost this app on AWS via Elastic Beanstalk, instead of the current Plotly Cloud hosting.",
         ]),
 }
@@ -840,20 +840,16 @@ class DisplayData:
         return None
     
 
-# TODO/Tech Debt:
-# - Write readme !!
-# - Write method section
-
-
-# ASSEMBLE APP
+# ASSEMBLE APP (Done outside class for Plotly Cloud compatibility)
 app = dash.Dash(__name__, title='CFR Analysis Dashboard')
 server = app.server
 display_data = DisplayData(text=page_text, css=page_css)
 display_data.display_data()
 app.layout = html.Main(display_data.layout)
 
-# TEST EXECUTE CODE 
+## TEST EXECUTE CLASS "RUN ALL" METHOD
 if __name__ == '__main__':
+
     app.run(debug=True)
     #app.run(debug=True, use_reloader=True)
 

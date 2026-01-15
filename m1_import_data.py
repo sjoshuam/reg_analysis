@@ -1,4 +1,4 @@
-'''Download raw data from source'''
+'''m1_import_data.py: Download raw data from source to a_in/cfr_raw'''
 
 ## LIBRARIES AND SETTINGS
 import requests, os, datetime, time, gzip
@@ -7,6 +7,7 @@ import requests, os, datetime, time, gzip
 
 class ImportData:
     '''Download raw data from source'''
+
 
     def __init__(self, output_dir:str='a_in/cfr_raw', years:tuple=None, titles:tuple=None) -> None:
         '''Initialize the ImportData class'''
@@ -28,7 +29,8 @@ class ImportData:
         # Checklist
         self.checklist = {i:False for i in ['make_roster', 'download_data']}
         if not os.path.exists(output_dir): os.makedirs(output_dir)
-    
+
+
     def __str__(self) -> str:
         '''Print status information about class'''
 
@@ -49,6 +51,7 @@ class ImportData:
         results = "\n".join(results)
         
         return "\n".join([status, results])
+
 
     def make_roster(self):
         '''Create a roster of data files to download'''
@@ -72,7 +75,8 @@ class ImportData:
         self.roster = roster
         self.checklist['make_roster'] = True
         return roster
-    
+
+
     def download_data(self, query_server:bool=False, verbose:bool=False):
         '''Download data files as per the roster'''
 
@@ -106,16 +110,17 @@ class ImportData:
     
     def import_data(self, query_server:bool=True, verbose:bool=False):
         '''Execute full data import process'''
-        if not self.checklist['make_roster']: self.make_roster()
-        if not self.checklist['download_data']: self.download_data(query_server=query_server, verbose=verbose)
+        if not self.checklist['make_roster']:
+            self.make_roster()
+        if not self.checklist['download_data']:
+            self.download_data(query_server=query_server, verbose=verbose)
         return self.roster
     
 
-## TEST EXECUTION
+## TEST EXECUTE CLASS "RUN ALL" METHOD
 if __name__ == '__main__':
-    imported_data = ImportData()
-    imported_data.import_data(verbose=True)
-    imported_data.download_data(verbose=True)
     
+    imported_data = ImportData()
+    imported_data.import_data(verbose=True)    
 
 ##########==========##########==========##########==========##########==========##########==========##########==========

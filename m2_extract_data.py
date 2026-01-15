@@ -1,4 +1,4 @@
-'''2_extract_data.py: Parse downloaded xml files'''
+'''2_extract_data.py: Parse downloaded xml files to a_in/cfr_parsed, then to a_io/cfr_parsed_part, _section'''
 
 ## LIBRARIES AND SETTINGS
 import gzip, os
@@ -15,6 +15,7 @@ spark = pyspark.sql.SparkSession.builder.appName('ExtractData').config('spark.ex
 class ExtractData:
     '''Parse downloaded xml files'''
 
+
     def __init__(self, input_dir:str='a_in/cfr_raw', output_dir:str='a_in/cfr_parsed', test_mode=False) -> None:
         '''Initialize the ExtractData class'''
 
@@ -30,6 +31,7 @@ class ExtractData:
         self.checklist = {i:False for i in ['make_roster', 'refine_data_from_files', 'compile_dataset']}
         if not os.path.exists(output_dir): os.makedirs(output_dir)
 
+
     def __str__(self) -> str:
         '''Print status information about class'''
 
@@ -39,7 +41,8 @@ class ExtractData:
         status = "\n".join(status)
 
         return status
-    
+
+
     @staticmethod
     def extract_sections_from_title(title_file:str, input_dir:str, output_dir:str) -> dict:
         '''Extract all sections (DIV8) and appendices (DIV9) from a given Title (DIV5)'''
@@ -195,7 +198,8 @@ class ExtractData:
         out_file = os.path.join(output_dir, title_label + '-Section')
         section.write.mode('overwrite').parquet(out_file)
         return section
-    
+
+
     def make_roster(self) -> list:
         '''Create roster of title-year datafiles in input directory'''
 
@@ -224,12 +228,14 @@ class ExtractData:
         self.checklist['make_roster'] = True
         self.roster = files
         return files
-    
+
+
     def refine_data_from_files(self) -> pyspark.sql.DataFrame:
         '''Refine data from title-year datafiles in input directory'''
 
         # Ensure roster is created
-        if not self.checklist['make_roster']: self.make_roster()
+        if not self.checklist['make_roster']:
+            self.make_roster()
 
         # iterate through roster and extract data
         lines_read = []
@@ -258,7 +264,8 @@ class ExtractData:
         # checklist and conclusions
         self.checklist['refine_data_from_files'] = True
         return self.roster
-    
+
+
     def compile_dataset(self) -> None:
         '''Compile all refined data to one parquet file'''
         for i in ['Section', 'Part']:
@@ -274,22 +281,22 @@ class ExtractData:
         self.checklist['compile_dataset'] = True
         return None
 
+
     def extract_data(self) ->  None:
-        '''Extract full data extraction pipeline'''
-        if not self.checklist['make_roster']: self.make_roster()
-        if not self.checklist['refine_data_from_files']: self.refine_data_from_files()
-        if not self.checklist['compile_dataset']: self.compile_dataset()
+        '''Pipeline executor - Extract data from xml files to parquet'''
+        if not self.checklist['make_roster']: 
+            self.make_roster()
+        if not self.checklist['refine_data_from_files']: 
+            self.refine_data_from_files()
+        if not self.checklist['compile_dataset']: 
+            self.compile_dataset()
         return self.roster
 
-## TEST EXECUTE CODE
+## TEST EXECUTE CLASS "RUN ALL" METHOD
 if __name__ == '__main__':
 
-    # Extract data (m2_extract_data.py)
     extracted_data = ExtractData(test_mode=False)
     extracted_data.extract_data()
-    print(extracted_data)
-
-    #
     
 
     ##########==========##########==========##########==========##########==========##########==========##########==========

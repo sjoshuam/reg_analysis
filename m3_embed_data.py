@@ -1,4 +1,4 @@
-'''Calculate embeddings and statistics from regulatory section text data'''
+'''Calculate embeddings and statistics from regulatory section text data to a_in/cfr_embedded_part, _section'''
 
 ## IMPORTS AND SETTINGS
 import os, datetime, numpy as np
@@ -149,22 +149,15 @@ class EmbedData:
         return None
   
     def embed_data(self) -> None:
-        '''Calculate embeddings for regulation text'''
+        '''Pipeline Executor - Calculate embeddings for regulation text'''
         if not self.checklist['read_data']: self.read_data()
         if not self.checklist['make_embeddings']: self.make_embeddings()
         return None
 
-# Test class
+## TEST EXECUTE CLASS "RUN ALL" METHOD
 if __name__ == '__main__':
 
-    # Quantify data (m3_quantify_data.py)
-    start_time = datetime.datetime.now()
     embed_data = EmbedData(test_mode=False)
     embed_data.embed_data()
-    print('Elapsed time:', datetime.datetime.now() - start_time)
-
-
-    #pyspark --conf "spark.driver.extraJavaOptions=-Dlog4j.configurationFile=/home/sjoshuam/code/log4j2.properties"
-
 
 ##########==========##########==========##########==========##########==========##########==========##########==========
