@@ -1,0 +1,18 @@
+# Load base image
+FROM python:3.12-slim
+
+# build file environment
+WORKDIR /reg_analysis
+COPY b_io b_io/.
+
+# build python environment
+RUN pip install --no-cache-dir plotly==6.5.* dash[cloud]==3.3.* pandas==2.3.* openpyxl gunicorn
+COPY m5_display_data.py app.py
+
+# run app on port 8050
+EXPOSE 8050
+CMD ["gunicorn", "-b", "0.0.0.0:8050", "app:server", "-w", "4"]
+
+# podman build -t reg-analysis -f m6_container
+# podman run -p 8050:8050 reg-analysis
+# podman run -it --entrypoint bash localhost/reg-analysis

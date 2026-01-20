@@ -112,7 +112,7 @@ page_text = {
         "The core interactive functionality is two dropdown menus, which enable users to select a CFR part for examination.",
         "However, all plots also provide additional information if the user hovers over plot elements.",
         "Future development (high priority) will add more plot-based analysis of the factors contributing to regulatory bulk, especially those relating to dissimilarity scores.",
-        "Future development (low priority) may also rehost this app on AWS via Elastic Beanstalk, instead of the current Plotly Cloud hosting.",
+        "Future development (low priority) may also rehost this app on AWS, instead of the current Plotly Cloud hosting.",
         ]),
 }
 
@@ -797,7 +797,7 @@ class DisplayData:
 ########## Class Methods: Pipeline Assembly ######
     
 
-    def package_app(self):
+    def package_app(self): # TODO: move to deployment script
         '''Package the Dash app for deployment'''
         working_dir = os.path.basename(os.getcwd())
         if working_dir == 'reg_analysis':
@@ -834,8 +834,9 @@ class DisplayData:
 
         self.layout.append(html.Div([html.P(' ')], style=self.css['spacer']))
 
-        # package app for deployment
-        self.package_app()
+        # package app for deployment # TODO: move this to deployment script
+        print('WARNING: Plotly Cloud App packaging disabled, pending shift to deployment script.')
+        #self.package_app()
 
         return None
     
